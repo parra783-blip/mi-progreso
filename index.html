@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mi Progreso">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>Mi Progreso</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow" id="todayLabel"></p>
+        <h1>Mi Progreso</h1>
+      </div>
+      <button class="icon-btn" id="themeToggle" aria-label="Cambiar tema">◐</button>
+    </header>
+
+    <main>
+      <section class="view active" id="homeView">
+        <div class="hero-card">
+          <div class="hero-copy">
+            <span class="badge">Racha actual</span>
+            <h2><span id="streakDays">0</span> días</h2>
+            <p>Registra algo hoy para mantener tu constancia.</p>
+          </div>
+          <div class="ring" id="calorieRing">
+            <div class="ring-inner">
+              <strong id="caloriesConsumed">0</strong>
+              <span>kcal</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <article class="metric-card">
+            <div class="metric-icon">⚖️</div>
+            <div>
+              <span>Peso actual</span>
+              <strong id="currentWeight">—</strong>
+              <small id="weightDelta">Sin registros</small>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-icon">💉</div>
+            <div>
+              <span>Próxima dosis</span>
+              <strong id="nextDoseDate">—</strong>
+              <small id="lastDoseText">Sin aplicaciones</small>
+            </div>
+          </article>
+        </div>
+
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <span class="section-label">Objetivo diario</span>
+              <h3>Calorías</h3>
+            </div>
+            <button class="text-btn" data-open="settingsModal">Editar meta</button>
+          </div>
+          <div class="progress-line"><div id="calorieBar"></div></div>
+          <div class="split-labels">
+            <span><b id="caloriesRemaining">0</b> restantes</span>
+            <span><b id="calorieGoal">2000</b> meta</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <span class="section-label">Acciones rápidas</span>
+              <h3>Registrar</h3>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <button class="quick-btn" data-open="foodModal"><span>🍽️</span>Comida</button>
+            <button class="quick-btn" data-open="weightModal"><span>⚖️</span>Peso</button>
+            <button class="quick-btn" data-open="doseModal"><span>💉</span>Dosis</button>
+            <button class="quick-btn" data-open="symptomModal"><span>🩺</span>Síntoma</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <span class="section-label">Resumen</span>
+              <h3>Últimos 7 días</h3>
+            </div>
+          </div>
+          <canvas id="weightChart" height="180"></canvas>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <span class="section-label">Motivación</span>
+              <h3>Logros</h3>
+            </div>
+          </div>
+          <div id="achievements" class="achievement-grid"></div>
+        </article>
+      </section>
+
+      <section class="view" id="foodView">
+        <div class="section-title">
+          <div><span class="section-label">Seguimiento diario</span><h2>Alimentación</h2></div>
+          <button class="primary-btn small" data-open="foodModal">+ Añadir</button>
+        </div>
+        <div class="date-filter"><input id="foodDateFilter" type="date"></div>
+        <div id="foodSummary" class="macro-grid"></div>
+        <div id="foodList" class="list-stack"></div>
+      </section>
+
+      <section class="view" id="weightView">
+        <div class="section-title">
+          <div><span class="section-label">Evolución</span><h2>Peso</h2></div>
+          <button class="primary-btn small" data-open="weightModal">+ Registrar</button>
+        </div>
+        <div class="grid two">
+          <article class="metric-card"><div class="metric-icon">🎯</div><div><span>Meta</span><strong id="goalWeightLabel">—</strong><small id="goalProgressLabel">Configúrala</small></div></article>
+          <article class="metric-card"><div class="metric-icon">📉</div><div><span>Total perdido</span><strong id="totalLost">—</strong><small>Desde el inicio</small></div></article>
+        </div>
+        <article class="card"><canvas id="fullWeightChart" height="220"></canvas></article>
+        <div id="weightList" class="list-stack"></div>
+      </section>
+
+      <section class="view" id="doseView">
+        <div class="section-title">
+          <div><span class="section-label">Tratamiento</span><h2>Mounjaro</h2></div>
+          <button class="primary-btn small" data-open="doseModal">+ Registrar</button>
+        </div>
+        <div class="notice">Registra únicamente la dosis indicada por tu médico. La app no recomienda aumentos ni cambios de tratamiento.</div>
+        <div id="doseList" class="list-stack"></div>
+      </section>
+
+      <section class="view" id="moreView">
+        <div class="section-title"><div><span class="section-label">Cuenta local</span><h2>Más</h2></div></div>
+        <article class="card">
+          <div class="settings-row"><span>Meta de calorías</span><button class="text-btn" data-open="settingsModal">Editar</button></div>
+          <div class="settings-row"><span>Datos personales</span><button class="text-btn" data-open="profileModal">Editar</button></div>
+          <div class="settings-row"><span>Exportar respaldo</span><button class="text-btn" id="exportBackup">Descargar</button></div>
+          <div class="settings-row"><span>Importar respaldo</span><label class="text-btn file-label">Seleccionar<input type="file" id="importBackup" accept=".json"></label></div>
+          <div class="settings-row"><span>Exportar CSV</span><button class="text-btn" id="exportCsv">Descargar</button></div>
+          <div class="settings-row danger"><span>Borrar todos los datos</span><button class="text-btn danger-text" id="clearData">Borrar</button></div>
+        </article>
+        <p class="privacy-note">Tus registros se guardan únicamente en este dispositivo. Haz respaldos periódicos en iCloud Drive.</p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-view="homeView"><span>⌂</span>Inicio</button>
+      <button class="nav-item" data-view="foodView"><span>🍽️</span>Comida</button>
+      <button class="nav-item" data-view="weightView"><span>⚖️</span>Peso</button>
+      <button class="nav-item" data-view="doseView"><span>💉</span>Dosis</button>
+      <button class="nav-item" data-view="moreView"><span>•••</span>Más</button>
+    </nav>
+  </div>
+
+  <div class="modal" id="foodModal"><div class="modal-card">
+    <div class="modal-head"><h3>Registrar comida</h3><button class="close-modal">×</button></div>
+    <form id="foodForm">
+      <label>Fecha<input type="date" name="date" required></label>
+      <label>Momento<select name="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Snack</option></select></label>
+      <label>Alimento<input name="name" placeholder="Ej. sánduche de jamón y queso" required></label>
+      <div class="grid two"><label>Calorías<input type="number" name="calories" min="0" required></label><label>Proteína (g)<input type="number" name="protein" min="0" step="0.1"></label></div>
+      <div class="grid two"><label>Carbohidratos (g)<input type="number" name="carbs" min="0" step="0.1"></label><label>Grasa (g)<input type="number" name="fat" min="0" step="0.1"></label></div>
+      <button class="primary-btn" type="submit">Guardar comida</button>
+    </form>
+  </div></div>
+
+  <div class="modal" id="weightModal"><div class="modal-card">
+    <div class="modal-head"><h3>Registrar peso</h3><button class="close-modal">×</button></div>
+    <form id="weightForm">
+      <label>Fecha<input type="date" name="date" required></label>
+      <label>Peso (kg)<input type="number" name="weight" min="20" max="400" step="0.1" required></label>
+      <label>Cintura (cm, opcional)<input type="number" name="waist" min="30" max="300" step="0.1"></label>
+      <button class="primary-btn" type="submit">Guardar peso</button>
+    </form>
+  </div></div>
+
+  <div class="modal" id="doseModal"><div class="modal-card">
+    <div class="modal-head"><h3>Registrar dosis</h3><button class="close-modal">×</button></div>
+    <form id="doseForm">
+      <label>Fecha y hora<input type="datetime-local" name="datetime" required></label>
+      <label>Dosis (mg)<select name="dose"><option>2.5</option><option>5</option><option>7.5</option><option>10</option><option>12.5</option><option>15</option></select></label>
+      <label>Zona<select name="site"><option>Abdomen izquierdo</option><option>Abdomen derecho</option><option>Muslo izquierdo</option><option>Muslo derecho</option><option>Brazo izquierdo</option><option>Brazo derecho</option></select></label>
+      <label>Notas<textarea name="notes" rows="3" placeholder="Opcional"></textarea></label>
+      <button class="primary-btn" type="submit">Guardar aplicación</button>
+    </form>
+  </div></div>
+
+  <div class="modal" id="symptomModal"><div class="modal-card">
+    <div class="modal-head"><h3>Registrar síntoma</h3><button class="close-modal">×</button></div>
+    <form id="symptomForm">
+      <label>Fecha<input type="date" name="date" required></label>
+      <label>Síntoma<select name="symptom"><option>Náusea</option><option>Vómito</option><option>Diarrea</option><option>Estreñimiento</option><option>Dolor abdominal</option><option>Acidez</option><option>Otro</option></select></label>
+      <label>Intensidad<select name="severity"><option>Leve</option><option>Moderada</option><option>Severa</option></select></label>
+      <label>Notas<textarea name="notes" rows="3"></textarea></label>
+      <button class="primary-btn" type="submit">Guardar síntoma</button>
+    </form>
+  </div></div>
+
+  <div class="modal" id="settingsModal"><div class="modal-card">
+    <div class="modal-head"><h3>Meta diaria</h3><button class="close-modal">×</button></div>
+    <form id="settingsForm">
+      <label>Calorías diarias<input type="number" name="calorieGoal" min="800" max="6000" required></label>
+      <button class="primary-btn" type="submit">Guardar meta</button>
+    </form>
+  </div></div>
+
+  <div class="modal" id="profileModal"><div class="modal-card">
+    <div class="modal-head"><h3>Datos personales</h3><button class="close-modal">×</button></div>
+    <form id="profileForm">
+      <label>Nombre<input name="name" placeholder="Tu nombre"></label>
+      <label>Estatura (cm)<input type="number" name="height" min="100" max="250"></label>
+      <label>Peso meta (kg)<input type="number" name="goalWeight" min="20" max="400" step="0.1"></label>
+      <button class="primary-btn" type="submit">Guardar datos</button>
+    </form>
+  </div></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
