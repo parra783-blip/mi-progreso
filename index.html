@@ -84,6 +84,8 @@
             <button class="quick-btn" data-open="weightModal"><span>⚖️</span>Peso</button>
             <button class="quick-btn" data-open="doseModal"><span>💉</span>Dosis</button>
             <button class="quick-btn" data-open="symptomModal"><span>🩺</span>Síntoma</button>
+            <button class="quick-btn" data-open="waterModal"><span>💧</span>Agua</button>
+            <button class="quick-btn" data-open="activityModal"><span>🏃</span>Actividad</button>
           </div>
         </article>
 
@@ -140,11 +142,23 @@
         <div id="doseList" class="list-stack"></div>
       </section>
 
+      <section class="view" id="healthView">
+        <div class="section-title"><div><span class="section-label">Hábitos y tolerancia</span><h2>Salud</h2></div></div>
+        <div class="grid two">
+          <button class="health-card" data-open="waterModal"><span>💧</span><b>Agua</b><small id="waterTodayText">0 ml hoy</small></button>
+          <button class="health-card" data-open="activityModal"><span>🏃</span><b>Actividad</b><small id="activityTodayText">0 min hoy</small></button>
+          <button class="health-card" data-open="symptomModal"><span>🩺</span><b>Síntomas</b><small id="symptomTodayText">Sin síntomas hoy</small></button>
+          <button class="health-card" id="printReportBtn"><span>📄</span><b>Informe</b><small>Guardar como PDF</small></button>
+        </div>
+        <article class="card"><div class="card-head"><div><span class="section-label">Últimos registros</span><h3>Síntomas</h3></div></div><div id="symptomList" class="list-stack"></div></article>
+      </section>
+
       <section class="view" id="moreView">
         <div class="section-title"><div><span class="section-label">Cuenta local</span><h2>Más</h2></div></div>
         <article class="card">
           <div class="settings-row"><span>Meta de calorías</span><button class="text-btn" data-open="settingsModal">Editar</button></div>
-          <div class="settings-row"><span>Datos personales</span><button class="text-btn" data-open="profileModal">Editar</button></div>
+          <div class="settings-row"><span>Datos personales y metas</span><button class="text-btn" data-open="profileModal">Editar</button></div>
+          <div class="settings-row"><span>Informe médico</span><button class="text-btn" id="printReportBtn2">Abrir</button></div>
           <div class="settings-row"><span>Exportar respaldo</span><button class="text-btn" id="exportBackup">Descargar</button></div>
           <div class="settings-row"><span>Importar respaldo</span><label class="text-btn file-label">Seleccionar<input type="file" id="importBackup" accept=".json"></label></div>
           <div class="settings-row"><span>Exportar CSV</span><button class="text-btn" id="exportCsv">Descargar</button></div>
@@ -159,6 +173,7 @@
       <button class="nav-item" data-view="foodView"><span>🍽️</span>Comida</button>
       <button class="nav-item" data-view="weightView"><span>⚖️</span>Peso</button>
       <button class="nav-item" data-view="doseView"><span>💉</span>Dosis</button>
+      <button class="nav-item" data-view="healthView"><span>♡</span>Salud</button>
       <button class="nav-item" data-view="moreView"><span>•••</span>Más</button>
     </nav>
   </div>
@@ -168,9 +183,12 @@
     <form id="foodForm">
       <label>Fecha<input type="date" name="date" required></label>
       <label>Momento<select name="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Snack</option></select></label>
+      <label>Buscar alimento<input id="foodSearch" autocomplete="off" placeholder="Ej. pollo, pan, yogurt"></label>
+      <div id="foodSuggestions" class="suggestions"></div>
       <label>Alimento<input name="name" placeholder="Ej. sánduche de jamón y queso" required></label>
       <div class="grid two"><label>Calorías<input type="number" name="calories" min="0" required></label><label>Proteína (g)<input type="number" name="protein" min="0" step="0.1"></label></div>
       <div class="grid two"><label>Carbohidratos (g)<input type="number" name="carbs" min="0" step="0.1"></label><label>Grasa (g)<input type="number" name="fat" min="0" step="0.1"></label></div>
+      <label>Foto opcional<input type="file" name="photo" accept="image/*" capture="environment"></label>
       <button class="primary-btn" type="submit">Guardar comida</button>
     </form>
   </div></div>
@@ -207,6 +225,26 @@
     </form>
   </div></div>
 
+  <div class="modal" id="waterModal"><div class="modal-card">
+    <div class="modal-head"><h3>Registrar agua</h3><button class="close-modal">×</button></div>
+    <form id="waterForm">
+      <label>Fecha<input type="date" name="date" required></label>
+      <div class="water-options"><button type="button" data-water="250">+250 ml</button><button type="button" data-water="500">+500 ml</button><button type="button" data-water="750">+750 ml</button></div>
+      <label>Cantidad (ml)<input type="number" name="ml" min="1" required></label>
+      <button class="primary-btn" type="submit">Guardar agua</button>
+    </form>
+  </div></div>
+
+  <div class="modal" id="activityModal"><div class="modal-card">
+    <div class="modal-head"><h3>Registrar actividad</h3><button class="close-modal">×</button></div>
+    <form id="activityForm">
+      <label>Fecha<input type="date" name="date" required></label>
+      <label>Actividad<select name="type"><option>Caminata</option><option>Gimnasio</option><option>Bicicleta</option><option>Natación</option><option>Otra</option></select></label>
+      <label>Duración (min)<input type="number" name="minutes" min="1" required></label>
+      <button class="primary-btn" type="submit">Guardar actividad</button>
+    </form>
+  </div></div>
+
   <div class="modal" id="settingsModal"><div class="modal-card">
     <div class="modal-head"><h3>Meta diaria</h3><button class="close-modal">×</button></div>
     <form id="settingsForm">
@@ -221,6 +259,8 @@
       <label>Nombre<input name="name" placeholder="Tu nombre"></label>
       <label>Estatura (cm)<input type="number" name="height" min="100" max="250"></label>
       <label>Peso meta (kg)<input type="number" name="goalWeight" min="20" max="400" step="0.1"></label>
+      <div class="grid two"><label>Meta proteína (g)<input type="number" name="proteinGoal" min="20" max="400"></label><label>Meta agua (ml)<input type="number" name="waterGoal" min="500" max="8000"></label></div>
+      <label>Meta actividad (min/día)<input type="number" name="activityGoal" min="5" max="300"></label>
       <button class="primary-btn" type="submit">Guardar datos</button>
     </form>
   </div></div>
